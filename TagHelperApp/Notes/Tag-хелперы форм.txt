@@ -1,0 +1,177 @@
+﻿-------------------------------------------------------------------------------------
+asp-controller: указывает на контроллер, которому предназначен запрос
+
+asp-action: указывает на действие контроллера
+
+asp-area: указывает на название области, в которой будет вызываться контроллер для обработки формы
+
+asp-antiforgery: если имеет значение true, то для этой формы будет генерироваться antiforgery token
+
+asp-route: указывает на название маршрута
+
+asp-all-route-data: устанавливает набор значений для параметров
+
+asp-route-[название параметра]: определяет значение для определенного параметра
+
+asp-page: указывает на страницу RazorPage, которая будет обрабатывать запрос
+
+asp-page-handler: указывает на обработчик страницы RazorPage, который применяется для обработки запроса
+
+asp-fragment: указывает фрагмент, который добавляется к запрашиваемому адресу после символа #.
+-------------------------------------------------------------------------------------
+
+Model
+-------------------------------------------------------------------------------------
+public class Product
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public int Price { get; set; }
+ 
+    public int CompanyId { get; set; }
+    public Company Company { get; set; }
+}
+ 
+public class Company
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+}
+-------------------------------------------------------------------------------------
+
+Controller
+-------------------------------------------------------------------------------------
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.AspNetCore.Mvc;
+using TagHelpersApp.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
+ 
+namespace TagHelpersApp.Controllers
+{
+    public class HomeController : Controller
+    {
+        IEnumerable<Company> companies = new List<Company>
+        {
+            new Company { Id = 1, Name = "Apple" },
+            new Company { Id = 2, Name = "Samsung" },
+            new Company { Id = 3, Name = "Google" }
+        };
+        public IActionResult Create()
+        {
+            ViewBag.Companies = new SelectList(companies, "Id", "Name");
+            return View();
+        }
+ 
+        [HttpPost]
+        public string Create(Product product)
+        {
+            Company company = companies.FirstOrDefault(c => c.Id == product.CompanyId);
+            return $"Добавлен новый элемент: {product.Name} ({company?.Name})";
+        }
+    }
+}
+-------------------------------------------------------------------------------------
+
+View
+-------------------------------------------------------------------------------------
+@using TagHelpersApp.Models
+@model Product
+ 
+@using (Html.BeginForm())
+{
+    <div>
+        @Html.LabelFor(m => m.Name)
+        @Html.EditorFor(m => m.Name)
+    </div>
+    <div>
+        @Html.LabelFor(m => m.Price)
+        @Html.EditorFor(m => m.Price)
+    </div>
+    <div>
+         @Html.LabelFor(m => m.Company)
+         @Html.DropDownListFor(m => m.CompanyId, ViewBag.Companies as IEnumerable<SelectListItem>)
+    </div>
+    <div>
+        <input type="submit" value="Save" />
+    </div>
+}
+-------------------------------------------------------------------------------------
+
+LabelTagHelper
+-------------------------------------------------------------------------------------
+<label asp-for="Name"></label>
+-------------------------------------------------------------------------------------
+
+InputTagHelper
+-------------------------------------------------------------------------------------
+<input asp-for="Name" />
+-------------------------------------------------------------------------------------
+
+TextAreaTagHelper
+-------------------------------------------------------------------------------------
+<textarea asp-for="Name"></textarea>
+-------------------------------------------------------------------------------------
+
+SelectTagHelper
+-------------------------------------------------------------------------------------
+<select asp-for="CompanyId" asp-items="ViewBag.Companies"></select>
+
+<select asp-for="CompanyId" asp-items="ViewBag.Companies">
+    <option selected="selected" disabled="disabled">Выберите компанию</option>
+</select>
+-------------------------------------------------------------------------------------
+
+Работа с enum
+-------------------------------------------------------------------------------------
+public enum DayTime
+{
+    [Display(Name ="Утро")]
+    Morning,
+    [Display(Name = "День")]
+    Afternoon,
+    [Display(Name = "Вечер")]
+    Evening,
+    [Display(Name = "Ночь")]
+    Night
+}
+
+public class DayTimeViewModel
+{
+    public DayTime Period { get; set; }
+}
+
+Controller
+-------------------------------------------------------------------------------------
+public IActionResult Index()
+{
+    return View();
+}
+[HttpPost]
+public IActionResult Index(DayTimeViewModel model)
+{
+    return Content(model.Period.ToString());
+}
+
+View
+-------------------------------------------------------------------------------------
+@using TagHelpersApp.Models
+@model DayTimeViewModel
+ 
+<form method="post">
+    <div>
+        <div>
+            <label asp-for="Period">Время суток</label>
+            <select asp-for="Period" asp-items="Html.GetEnumSelectList<DayTime>()"></select>
+        </div>
+        <div>
+            <input type="submit" value="Save" />
+        </div>
+    </div>
+</form>
+-------------------------------------------------------------------------------------
+
+<div>
+    <label asp-for="Period">Время суток</label>
+    <select asp-for="Period" asp-items="@new SelectList(Enum.GetNames(typeof(DayTime)))"></select>
+</div>

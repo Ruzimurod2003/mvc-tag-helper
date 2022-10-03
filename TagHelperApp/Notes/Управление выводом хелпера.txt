@@ -1,0 +1,138 @@
+﻿Управление выводом хелпера
+-------------------------------------------------------------------------------------
+TagName: указывает, какой элемент html будет создаваться вместо тега хелпера
+
+TagMode: устанавливает формат создаваемого элемента (с одним или с двумя тегами)
+
+Attributes: представляет коллекцию атрибутов, устанавливаемых у создаваемого элемента html
+
+Content: представляет содержимое генерируемого элемента html в виде объекта TagHelperContent
+
+PreContent: представляет содержимое, которое устанавливается перед создаваемым элементом html
+
+PostContent: представляет содержимое, которое устанавливается после создаваемого элемента html
+
+PreElement: представляет html-элемент, который добавляется перед создаваемым элементом html
+
+PostElement: представляет html-элемент, который добавляется после создаваемого элемента html
+-------------------------------------------------------------------------------------
+
+Закрытие элемента
+-------------------------------------------------------------------------------------
+StartTagAndEndTag: элемент имеет оба тега
+
+SelfClosing: элемент содержит самозакрывающийся тег
+
+StartTagOnly: элемент имеет только открывающий тег
+
+
+public class TimerTagHelper : TagHelper
+{
+    public override void Process(TagHelperContext context, TagHelperOutput output)
+    {
+        output.TagName = "div";
+        output.TagMode = TagMode.StartTagAndEndTag;
+        output.Content.SetContent($"Текущее время: {DateTime.Now.ToString("HH:mm:ss")}");
+    }
+}
+
+Например: <timer />
+-------------------------------------------------------------------------------------
+
+Управление контентом
+-------------------------------------------------------------------------------------
+SetContent(text): устанавливает текстовое содержимое элемента
+
+SetHtmlContent(html): устанавливает вложенный html-код элемента
+
+Append(text): добавляет к текстовому содержимому элемента некоторый текст
+
+AppendHtml(html): добавляет к внутреннему коду элемента некоторый код html
+
+Clear(): очищает элемент
+
+*************************************************************************************
+public class TimerTagHelper : TagHelper
+{
+    public override void Process(TagHelperContext context, TagHelperOutput output)
+    {
+        output.TagName = "div";
+        output.TagMode = TagMode.StartTagAndEndTag;
+        // элемент перед тегом
+        output.PreElement.SetHtmlContent("<h4>Дата и время</h4>");
+        // элемент после тега
+        output.PostElement.SetHtmlContent($"<div>Дата: {DateTime.Now.ToString("dd/MM/yyyy")}</div>");
+ 
+        output.Content.SetContent($"Время: {DateTime.Now.ToString("HH:mm:ss")}");
+    }
+}
+
+Например: 
+<h4>Дата и время</h4>
+<div>Время: 20:34:42</div>
+<div>Дата: 07.12.2019</div>
+*************************************************************************************
+-------------------------------------------------------------------------------------
+
+
+Установка атрибутов
+-------------------------------------------------------------------------------------
+Add(string name, object value): добавляет атрибут с именем name и значением value
+
+RemoveAll(string name): удаляет все атрибуты с именем name
+
+SetAttribute(string name, object value): устанавливает для атрибута с именем name значение value
+
+Clear(): удаляет все атрибуты
+
+*************************************************************************************
+public class TimerTagHelper : TagHelper
+{
+    public override void Process(TagHelperContext context, TagHelperOutput output)
+    {
+        output.TagName = "div";
+        output.TagMode = TagMode.StartTagAndEndTag;
+        output.Attributes.SetAttribute("style", "color:red;");
+        output.Attributes.SetAttribute("class", "timer");
+        output.Content.SetContent($"{DateTime.Now.ToString("HH:mm:ss")}");
+    }
+}
+
+Например:
+<div style="color:red;" class="timer">20:57:26</div>
+*************************************************************************************
+-------------------------------------------------------------------------------------
+
+Передача сложных объектов
+-------------------------------------------------------------------------------------
+using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.TagHelpers;
+namespace TagHelpersApp.TagHelpers
+{
+    public class TimerTagHelper : TagHelper
+    {
+        public StyleInfo Style { get; set; }
+        public override void Process(TagHelperContext context, TagHelperOutput output)
+        {
+            output.TagName = "div";
+            output.TagMode = TagMode.StartTagAndEndTag;
+            // формируем стиль
+            string style = $"color:{Style.Color};font-size:{Style.FontSize}px;font-family:{Style.FontFamily};";
+            output.Attributes.SetAttribute("style", style);
+            output.Content.SetContent($"{DateTime.Now.ToString("HH:mm:ss")}");
+        }
+    }
+    public class StyleInfo
+    {
+        public string Color { get; set; }
+        public int FontSize { get; set; }
+        public string FontFamily { get; set; }
+    }
+}
+
+@using TagHelpersApp.TagHelpers <!-- пространство имен класса StyleInfo-->
+<timer style='new StyleInfo{Color="#74b9ff", FontFamily="Verdana", FontSize=18}' />
+<timer style='new StyleInfo{Color="#ff7675", FontFamily="Arial", FontSize=18}' />
+-------------------------------------------------------------------------------------
+

@@ -1,0 +1,24 @@
+﻿Коллекции объектов
+-------------------------------------------------------------------------------------
+public class ListTagHelper : TagHelper
+{
+    public List<string> Elements { get; set; }
+    public override void Process(TagHelperContext context, TagHelperOutput output)
+    {
+        output.TagName = "ul";
+        string listContent = "";
+        foreach (string item in Elements)
+            listContent += "<li>" + item + "</li>";
+ 
+        output.Content.SetHtmlContent(listContent);
+    }
+}
+
+@{ 
+    List<string> countries = new List<string> { "Бразилия", "Аргентина", "Уругвай" };
+    List<string> cities = new List<string> { "Бразилиа", "Буэйнос-Айрес", "Монтевидео" };
+}
+ 
+<list elements="countries"></list>
+<list elements="cities"></list>
+-------------------------------------------------------------------------------------

@@ -1,0 +1,45 @@
+﻿launchsettings.json
+-------------------------------------------------------------------------------------
+{
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iis": {
+      "applicationUrl": "http://localhost/TagHelpersApp",
+      "sslPort": 0
+    },
+    "iisExpress": {
+      "applicationUrl": "http://localhost:60141",
+      "sslPort": 0
+    }
+  },
+  "profiles": {
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "TagHelpersApp": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "http://localhost:5000"
+    }
+  }
+}
+-------------------------------------------------------------------------------------
+
+View
+-------------------------------------------------------------------------------------
+<environment names="Production">
+    <p>Проект развернут на сервере</p>
+</environment>
+ 
+<environment names="Development">
+    <p>Проект в состоянии разработки</p>
+</environment>
+-------------------------------------------------------------------------------------

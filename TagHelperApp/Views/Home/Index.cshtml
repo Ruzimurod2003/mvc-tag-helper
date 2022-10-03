@@ -1,0 +1,38 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<environment names="Production">
+    <p>Проект развернут на сервере</p>
+</environment>
+
+<environment names="Development">
+    <p>Проект в состоянии разработки</p>
+</environment>
+
+<timer></timer>
+
+<summary>
+    <timer></timer>
+    <date></date>
+</summary>
+
+<test color="navy" seconds-included="true" />
+<test color="#0984e3" seconds-included="false" />
+<test color="#ff7675" />
+<test />
+
+<product style='new StyleInfo{Color="red",Height=200,Width=100}'></product>
+@{
+    List<string> items = new List<string> { "Olma", "Anor", "Gilos", "Shaftoli" };
+    User user = new User
+    {
+        Id = 1,
+        Name = "Ruzimurod",
+        Email = "Ruzimurodabdunazarov2003@mail.ru",
+        Password = "R@z1mur0d"
+    };
+}
+<list items="items"></list>
+
+<user-info user="user"></user-info>

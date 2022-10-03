@@ -1,0 +1,9 @@
+﻿<a asp-controller="Home" asp-action="Contacts">Контакты</a>
+@Html.ActionLink("Контакты", "Contacts", "Home")
+
+_ViewImports.cshtml
+-------------------------------------------------------------------------------------
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@removeTagHelper "*, Microsoft.AspNetCore.Mvc.TagHelpers"
+-------------------------------------------------------------------------------------

@@ -1,0 +1,85 @@
+﻿-------------------------------------------------------------------------------------
+Attributes: указывает, что tag-хелпер применяется только к тем элементам, которые имеют определенные атрибуты.
+
+ParentTag: указывает, что tag-хелпер применяется только к тем элементам, которые определены внутри определенного элемента
+
+TagStructure: указывает, что tag-хелпер применяется только к тем элементам, которые соответствуют определенному значению 
+из перечисления TagStructure: Unspecified, NormalOrSelfClosing (стандартный или самозакрывающийся элемент) и
+WithoutEndTag (элемент без закрывающего тега)
+-------------------------------------------------------------------------------------
+
+Применение tag-хелпера к атрибутам
+-------------------------------------------------------------------------------------
+<div header>Первый параграф</div>
+<div header>Второй параграф</div>
+
+using Microsoft.AspNetCore.Razor.TagHelpers;
+ 
+[HtmlTargetElement(Attributes = "header")]
+public class HeaderTagHelper : TagHelper
+{
+    public override void Process(TagHelperContext context, TagHelperOutput output)
+    {
+        output.TagName = "h2";
+        output.Attributes.RemoveAll("header");
+    }
+}
+-------------------------------------------------------------------------------------
+
+Переопределение имени элемента
+-------------------------------------------------------------------------------------
+[HtmlTargetElement("article-header")]
+public class HeaderTagHelper : TagHelper
+{
+    public override void Process(TagHelperContext context, TagHelperOutput output)
+    {
+        output.TagName = "h2";
+        output.Attributes.RemoveAll("article-header");
+    }
+}
+
+<article-header>Заголовок!</article-header>
+-------------------------------------------------------------------------------------
+
+Установка родительского тега
+-------------------------------------------------------------------------------------
+[HtmlTargetElement(ParentTag ="form")]
+public class HeaderTagHelper : TagHelper
+{
+    public override void Process(TagHelperContext context, TagHelperOutput output)
+    {
+        output.TagName = "h2";
+    }
+}
+
+<header>Заголовок 1</header>
+ 
+<form>
+    <header>Заголовок 2</header>
+</form>
+-------------------------------------------------------------------------------------
+
+Сочетание нескольких условий
+-------------------------------------------------------------------------------------
+using Microsoft.AspNetCore.Razor.TagHelpers;
+ 
+namespace TagHelpersApp.TagHelpers
+{
+    [HtmlTargetElement("form-header", ParentTag ="form", Attributes ="form-title")]
+    public class HeaderTagHelper : TagHelper
+    {
+        public override void Process(TagHelperContext context, TagHelperOutput output)
+        {
+            output.TagName = "h2";
+            output.Attributes.RemoveAll("form-title");
+        }
+    }
+}
+
+<form-header>Заголовок1</form-header>
+<form-header form-title>Заголовок2</form-header>
+ 
+<form>
+    <form-header form-title>Заголовок3</form-header>
+</form>
+-------------------------------------------------------------------------------------
